@@ -1,0 +1,14 @@
+{
+  "name": "daret",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Daret — simulateur de cercle d'épargne (kit de départ du Sprint 2, Brief 1)",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./assets/style.css --minify",
+    "dev": "tailwindcss -i ./src/input.css -o ./assets/style.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}

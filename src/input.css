@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+/* Design tokens de Daret : les contrastes texte / fond ont été vérifiés (WCAG AA). */
+@theme {
+  --color-daret-fond: #f7f3ea;
+  --color-daret-encre: #1c2b27;
+  --color-daret-vert: #1f5f4a;
+  --color-daret-vert-clair: #dcebe4;
+  --color-daret-terre: #9a4a1f;
+  --color-daret-bordure: #c9c2b0;
+  --color-daret-erreur: #a31d1d;
+  --font-sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* États que tu bascules depuis JavaScript avec classList (ne mets jamais de style dans le JS). */
+@layer components {
+  .champ-invalide {
+    @apply border-daret-erreur ring-2 ring-daret-erreur/30;
+  }
+
+  .ligne-terminee {
+    @apply bg-daret-vert-clair text-daret-encre/70;
+  }
+
+  .ligne-terminee .nom-beneficiaire {
+    @apply line-through;
+  }
+
+  .prochain-tour {
+    @apply border-l-4 border-daret-terre bg-white font-semibold;
+  }
+}
