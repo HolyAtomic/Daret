@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-=======
-
 const form = document.querySelector("#daret-form")
 
 const nomCercle = document.querySelector("#nom-cercle")
@@ -101,5 +98,3 @@ form.addEventListener("submit", function(event){
     }
     console.log("Configuration valide !");
 })
- 
->>>>>>> US1
