@@ -4,6 +4,13 @@ const nomCercle = document.querySelector("#nom-cercle")
 const cotisation = document.querySelector("#cotisation")
 const periodicite = document.querySelector("#periodicite")
 const dateDebut = document.querySelector("#date-debut")
+const liste = document.querySelector("#participants-liste");
+const boutonAjouter = document.querySelector("#ajouter-participant");
+const compteur = document.querySelector("#participants-compteur");
+const erreur = document.querySelector("#participants-erreur");
+
+const minimum = Number(liste.dataset.min);
+const maximum = Number(liste.dataset.max);
 
 const fatals = [
     {
@@ -23,26 +30,30 @@ const fatals = [
         err: document.querySelector("#date-debut-erreur")
     }
 ];
-function deleterr(err, input){
-    err.textContent = ""
-    err.classList.add("hidden")
-    input.ariaInvalid = "false"
+function showerr(input, err, mssg) {
+    err.textContent = mssg;
+    err.classList.remove("hidden");
+    input.ariaInvalid = "true";
+    input.setAttribute("aria-describedby", err.id);
 }
-function showerr(input, err, mssg){
-    err.textContent = mssg
-    err.classList.remove("hidden")
-    input.ariaInvalid = "true"
+
+function deleterr(input, err) {
+    err.textContent = "";
+    err.classList.add("hidden");
+    input.ariaInvalid = "false";
+    input.removeAttribute("aria-describedby");
 }
-function validname(){
-    const name = nomCercle.value.trim()
-    const regex = /^[\p{L}\p{M}0-9 -]{3,40}$/u
-    
-    if (!regex.test(name)){
-        showerr(name, fatals[0].err, "Nom invalide (3 à 40 caractères).")
+function validname() {
+    const name = nomCercle.value.trim();
+    const regex = /^(?=.*[\p{L}\p{M}])[\p{L}\p{M}0-9 -]{3,40}$/u;
+
+    if (!regex.test(name)) {
+        showerr(nomCercle, fatals[0].err, "Le nom doit contenir 3 à 40 caractères et au moins une lettre.")
         return false
     }
-    deleterr(name, fatals[0].err)
-    return true
+
+    deleterr(nomCercle, fatals[0].err)
+    return true;
 }
 function valideCotisation(){
     const money = Number(cotisation.value)
@@ -98,3 +109,95 @@ form.addEventListener("submit", function(event){
     }
     console.log("Configuration valide !");
 })
+
+
+
+function mettreAJourCompteur() {
+    const nombre = liste.querySelectorAll("li").length;
+
+    compteur.textContent = nombre + " participants";
+
+    boutonAjouter.disabled = nombre >= maximum;
+
+    const boutonsSupprimer = liste.querySelectorAll(".retirer");
+
+    boutonsSupprimer.forEach(function(bouton) {
+        bouton.disabled = nombre <= minimum;
+    });
+}
+
+function ajouterParticipant() {
+    const nombre = liste.querySelectorAll("li").length;
+
+    if (nombre >= maximum) {
+        erreur.textContent = "Maximum 20 participants.";
+        erreur.classList.remove("hidden");
+        return;
+    }
+
+    erreur.textContent = "";
+    erreur.classList.add("hidden");
+
+    const ligne = document.createElement("li");
+    ligne.classList.add("flex", "items-center", "gap-2");
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "participants";
+    input.placeholder = "Prénom du participant";
+    input.classList.add(
+        "min-w-0",
+        "flex-1",
+        "rounded",
+        "border",
+        "border-daret-bordure",
+        "px-3",
+        "py-2"
+    );
+
+    const boutonSupprimer = document.createElement("button");
+    boutonSupprimer.type = "button";
+    boutonSupprimer.textContent = "Retirer";
+    boutonSupprimer.classList.add(
+        "retirer",
+        "rounded",
+        "border",
+        "px-3",
+        "py-2"
+    );
+
+    ligne.append(input, boutonSupprimer);
+    liste.append(ligne);
+
+    mettreAJourCompteur();
+    input.focus();
+}
+
+boutonAjouter.addEventListener("click", ajouterParticipant);
+
+liste.addEventListener("click", function(event) {
+    const bouton = event.target.closest(".retirer");
+
+    if (!bouton) {
+        return;
+    }
+
+    const nombre = liste.querySelectorAll("li").length;
+
+    if (nombre <= minimum) {
+        erreur.textContent = "Il faut garder au moins 2 participants.";
+        erreur.classList.remove("hidden");
+        return;
+    }
+
+    bouton.closest("li").remove();
+
+    erreur.textContent = "";
+    erreur.classList.add("hidden");
+
+    mettreAJourCompteur();
+});
+
+ajouterParticipant();
+ajouterParticipant();
+ajouterParticipant();
