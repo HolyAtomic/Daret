@@ -233,3 +233,98 @@ function calculerDateDernierTour(dateDebut, periodicite, nombreTours) {
 
     return date
 }
+
+function calculerDateTour(dateDebut, periodicite, numeroTour) {
+    const date = new Date(dateDebut);
+    const jourInitial = date.getDate();
+
+    for (let i = 0; i < numeroTour; i++) {
+        if (periodicite === "hebdomadaire") {
+            date.setDate(date.getDate() + 7);
+        } else if (periodicite === "quinzaine") {
+            date.setDate(date.getDate() + 14);
+        } else if (periodicite === "mensuelle") {
+            date.setDate(1);
+            date.setMonth(date.getMonth() + 1);
+
+            const dernierJour = new Date(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                0
+            ).getDate();
+
+            date.setDate(Math.min(jourInitial, dernierJour));
+        }
+    }
+
+    return date;
+}
+
+function formaterDate(date) {
+    return date.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+function genererCalendrier(
+    participants,
+    cotisation,
+    dateDebut,
+    periodicite
+) {
+    const conteneur = document.querySelector("#calendrier");
+    conteneur.replaceChildren();
+
+    const tableau = document.createElement("table");
+    const thead = document.createElement("thead");
+    const ligneEntete = document.createElement("tr");
+
+    const colonnes = [
+        "N°",
+        "Date du tour",
+        "Bénéficiaire",
+        "Montant reçu",
+        "Statut"
+    ];
+
+    colonnes.forEach(function (colonne) {
+        const th = document.createElement("th");
+        th.textContent = colonne;
+        ligneEntete.append(th);
+    });
+
+    thead.append(ligneEntete);
+
+    const tbody = document.createElement("tbody");
+
+    participants.forEach(function (participant, index) {
+        const ligne = document.createElement("tr");
+
+        const dateTour = calculerDateTour(
+            dateDebut,
+            periodicite,
+            index
+        );
+
+        const valeurs = [
+            index + 1,
+            formaterDate(dateTour),
+            participant,
+            (cotisation * participants.length).toLocaleString("fr-FR") + " MAD",
+            "À venir"
+        ];
+
+        valeurs.forEach(function (valeur) {
+            const td = document.createElement("td");
+            td.textContent = valeur;
+            ligne.append(td);
+        });
+
+        tbody.append(ligne);
+    });
+
+    tableau.append(thead, tbody);
+    conteneur.append(tableau);
+}
