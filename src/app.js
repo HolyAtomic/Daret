@@ -110,8 +110,6 @@ form.addEventListener("submit", function(event){
     console.log("Configuration valide !")
 })
 
-
-
 function mettreAJourCompteur() {
     const nombre = liste.querySelectorAll("li").length
 
@@ -328,3 +326,51 @@ function genererCalendrier(
     tableau.append(thead, tbody);
     conteneur.append(tableau);
 }
+
+const boutonTirage = document.querySelector("#tirage-au-sort");
+const boutonOrdreSaisie = document.querySelector("#ordre-saisie");
+const corpsCalendrier = document.querySelector("#calendrier-corps");
+
+let ordreInitial = [];
+
+function memoriserOrdreSaisie() {
+    const lignes = corpsCalendrier.querySelectorAll("tr");
+
+    ordreInitial = Array.from(lignes, function (ligne) {
+        return ligne.cells[2].textContent;
+    });
+}
+
+function melangerOrdre(participants) {
+    const resultat = [...participants];
+
+    for (let i = resultat.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [resultat[i], resultat[j]] = [resultat[j], resultat[i]];
+    }
+
+    return resultat;
+}
+
+function afficherOrdre(participants) {
+    const lignes = corpsCalendrier.querySelectorAll("tr");
+
+    lignes.forEach(function (ligne, index) {
+        ligne.cells[2].textContent = participants[index];
+    });
+}
+
+boutonTirage.addEventListener("click", function () {
+    if (ordreInitial.length === 0) {
+        memoriserOrdreSaisie();
+    }
+
+    const nouvelOrdre = melangerOrdre(ordreInitial);
+    afficherOrdre(nouvelOrdre);
+});
+
+boutonOrdreSaisie.addEventListener("click", function () {
+    afficherOrdre(ordreInitial);
+});
+
